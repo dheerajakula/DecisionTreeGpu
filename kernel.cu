@@ -123,12 +123,9 @@ __device__ float InferOneTree(Tree tree, const float* input)
 {
     int curr = 0;
     int count = 0;
-    printf("input 0 %f \n", input[0]);
-    printf("input 1 %f \n", input[1]);
-    printf("input 2 %f \n", input[2]);
+ 
     for (;;) {
         Node n = tree[curr];
-        printf("n %d \n", n.attr_index);
         if (n.is_leaf()) break;
         float val = input[n.fid()];
         bool cond = isnan(val) ? !n.def_left() : val >= n.thresh();
@@ -149,7 +146,7 @@ __global__ void MySingleTreeKernel(Tree* tree, float* input, int columns)
     // slice the input
     float* input_slice = input + i * no_of_columns;
     float output = InferOneTree(*tree, input_slice);
-    printf("output %f", output);
+    //printf("output %f", output);
 }
 
 
@@ -281,7 +278,9 @@ int main()
     const int no_of_input = 569;
     const int no_of_columns = 32;
    
-    float dataArrayFloat[569*32];
+    const int simulate_blocks = 1;
+
+    float* dataArrayFloat = new float[simulate_blocks * no_of_input * no_of_columns];
 
     
 
@@ -298,19 +297,27 @@ int main()
         float dataFloat = mresult[data];
         givenClassLabelsfloat.push_back(dataFloat);
         for (int j = 2; j < dataTable[0].size() - 1; j++) {
-            dataArrayFloat[(i - 1)*32 + j] = std::stof(dataTable[i][j]);
+            dataArrayFloat[(i - 1)*32 + j-1] = std::stof(dataTable[i][j]);
         }
     }
 
     float* dev_input = 0;
 
-    cudaStatus = cudaMalloc((void**)&dev_input, no_of_columns * no_of_input * sizeof(float));
+    for (int i = 0; i < simulate_blocks; i++)
+    {
+        for (int j = 0; j < 569 * 32; j++)
+        {
+            dataArrayFloat[i*569*32 + j] = dataArrayFloat[j];
+        }
+    }
+
+    cudaStatus = cudaMalloc((void**)&dev_input, simulate_blocks * no_of_columns * no_of_input * sizeof(float));
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMalloc failed!");
     }
 
     // Copy input vectors from host memory to GPU buffers.
-    cudaStatus = cudaMemcpy(dev_input, dataArrayFloat, no_of_columns * no_of_input * sizeof(float), cudaMemcpyHostToDevice);
+    cudaStatus = cudaMemcpy(dev_input, dataArrayFloat, simulate_blocks * no_of_columns * no_of_input * sizeof(float), cudaMemcpyHostToDevice);
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMemcpy failed!");
     }
@@ -320,7 +327,7 @@ int main()
     cudaEventCreate(&start);
     cudaEventRecord(start, 0);
 
-    MySingleTreeKernel << <1, 1 >> >(dev_my_tree, dev_input, no_of_columns);
+    MySingleTreeKernel << <simulate_blocks, 569 >> >(dev_my_tree, dev_input, no_of_columns);
 
     cudaEventCreate(&stop);
     cudaEventRecord(stop, 0);

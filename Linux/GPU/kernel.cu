@@ -1,8 +1,7 @@
-﻿
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include <thrust\device_vector.h>
-#include <thrust\reduce.h>
+#include <thrust/device_vector.h>
+#include <thrust/reduce.h>
 #include <stdio.h>
 #include <ctime>
 #include <string>
@@ -278,7 +277,7 @@ int main()
     const int no_of_input = 569;
     const int no_of_columns = 32;
    
-    const int simulate_blocks = 100000;
+    const int simulate_blocks = 1;
 
     float* dataArrayFloat = new float[simulate_blocks * no_of_input * no_of_columns];
 

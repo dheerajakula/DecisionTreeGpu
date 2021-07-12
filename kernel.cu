@@ -149,76 +149,65 @@ __global__ void MySingleTreeKernel(Tree* tree, float* input, int columns)
     //printf("output %f", output);
 }
 
-
-
-int main()
+Tree* InitializeModel()
 {
-    /*const int arraySize = 5;
-    const int a[arraySize] = { 1, 2, 3, 4, 5 };
-    const int b[arraySize] = { 10, 20, 30, 40, 50 };
-    int c[arraySize] = { 0 };*/
-    using namespace std;
-    clock_t begin = clock();
-
     const int treeSize = 31;
-
     Node treenodes[treeSize];
 
     // create a binary decision tree.
-    treenodes[0] = Node(7,0.052,false,1);
+    treenodes[0] = Node(7, 0.052, false, 1);
 
-    treenodes[1] = Node (20,16.54,false,3);
-    treenodes[2] = Node (26,0.225,false,5);
+    treenodes[1] = Node(20, 16.54, false, 3);
+    treenodes[2] = Node(26, 0.225, false, 5);
 
-    treenodes[3] = Node(13,37.61,false,7);
-    treenodes[4] = Node(21,20.22,false,9);
+    treenodes[3] = Node(13, 37.61, false, 7);
+    treenodes[4] = Node(21, 20.22, false, 9);
 
-    treenodes[5] = Node(-1,2.0,true,-1);
-    treenodes[6] = Node(23,710.2,false,11);
+    treenodes[5] = Node(-1, 2.0, true, -1);
+    treenodes[6] = Node(23, 710.2, false, 11);
 
-    treenodes[7] = Node(21,33.27,false,13);
-    treenodes[8] = Node(4,0.091,false,15);
+    treenodes[7] = Node(21, 33.27, false, 13);
+    treenodes[8] = Node(4, 0.091, false, 15);
 
-    treenodes[9] = Node(-1,2.0,true,-1);
-    treenodes[10] = Node(17,0.011,false,17);
+    treenodes[9] = Node(-1, 2.0, true, -1);
+    treenodes[10] = Node(17, 0.011, false, 17);
 
-    treenodes[11] = Node(21,25.95,false,19);
-    treenodes[12] = Node(1,14.12,false,21);
+    treenodes[11] = Node(21, 25.95, false, 19);
+    treenodes[12] = Node(1, 14.12, false, 21);
 
-    treenodes[13] = Node(-1,2.0,true,-1);
-    treenodes[14] = Node(21,34.14,false,23);
+    treenodes[13] = Node(-1, 2.0, true, -1);
+    treenodes[14] = Node(21, 34.14, false, 23);
 
-    treenodes[15] = Node(-1,2.0,true,-1);
-    treenodes[16] = Node(17,0.012,false,25);
+    treenodes[15] = Node(-1, 2.0, true, -1);
+    treenodes[16] = Node(17, 0.012, false, 25);
 
-    treenodes[17] = Node(-1,1.0,true,-1);
-    treenodes[18] = Node(-1,2.0,true,-1);
+    treenodes[17] = Node(-1, 1.0, true, -1);
+    treenodes[18] = Node(-1, 2.0, true, -1);
 
-    treenodes[19] = Node(-1,2.0,true,-1);
-    treenodes[20] = Node(9,0.065,false,27);
+    treenodes[19] = Node(-1, 2.0, true, -1);
+    treenodes[20] = Node(9, 0.065, false, 27);
 
-    treenodes[21] = Node(25,0.361,false,29);
-    treenodes[22] = Node(-1,1.0,true,-1);
+    treenodes[21] = Node(25, 0.361, false, 29);
+    treenodes[22] = Node(-1, 1.0, true, -1);
 
-    treenodes[23] = Node(-1,1.0,true,-1);
-    treenodes[24] = Node(-1,2.0,true,-1);
+    treenodes[23] = Node(-1, 1.0, true, -1);
+    treenodes[24] = Node(-1, 2.0, true, -1);
 
-    treenodes[25] = Node(-1,2.0,true,-1);
-    treenodes[26] = Node(-1,1.0,true,-1);
+    treenodes[25] = Node(-1, 2.0, true, -1);
+    treenodes[26] = Node(-1, 1.0, true, -1);
 
-    treenodes[27] = Node(-1,2.0,true,-1);
-    treenodes[28] = Node(-1,1.0,true,-1);
+    treenodes[27] = Node(-1, 2.0, true, -1);
+    treenodes[28] = Node(-1, 1.0, true, -1);
 
-    treenodes[29] = Node(-1,1.0,true,-1);
-    treenodes[30] = Node(-1,2.0,true,-1);
-
-
+    treenodes[29] = Node(-1, 1.0, true, -1);
+    treenodes[30] = Node(-1, 2.0, true, -1);
 
     cudaError_t cudaStatus;
 
     cudaStatus = cudaSetDevice(0);
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
+        fprintf(stderr, "failed intializing model!");
     }
 
     Tree my_tree = Tree(treenodes, treeSize);
@@ -231,26 +220,22 @@ int main()
     cudaStatus = cudaMalloc((void**)&dev_my_tree, sizeof(Tree));
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMalloc failed!");
+        fprintf(stderr, "failed intializing model!");
     }
 
     // Copy tree from host memory to GPU.
-    cudaStatus = cudaMemcpy(dev_my_tree, &my_tree,  sizeof(Tree), cudaMemcpyHostToDevice);
+    cudaStatus = cudaMemcpy(dev_my_tree, &my_tree, sizeof(Tree), cudaMemcpyHostToDevice);
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMemcpy failed!");
+        fprintf(stderr, "failed intializing model!");
     }
 
-    //// Create input dataset
-    //const int no_of_input = 1048576;
-    //float* host_input = new float[2*no_of_input];
-    //float* dev_input = 0;
-    //for (int i = 0; i < 2 * no_of_input; i++)
-    //{
-    //    host_input[i] = i % 50;
-    //    i++;
-    //    host_input[i] = i % 20;
+    return dev_my_tree;
+}
 
-    //}
-
+float* LoadRequest_to_host(int simulate_blocks, int no_of_input, int no_of_columns)
+{
+    using namespace std;
     // read input file
     map<string, float> mresult;
     mresult["B"] = 1.0;
@@ -275,14 +260,11 @@ int main()
     int row = dataTable.size() - 1;
     int column = dataTable[0].size() - 1;
 
-    const int no_of_input = 569;
-    const int no_of_columns = 32;
-   
-    const int simulate_blocks = 100000;
+    
 
     float* dataArrayFloat = new float[simulate_blocks * no_of_input * no_of_columns];
 
-    
+
 
     // Stores the predicted class labels for each row in Int
     vector<float> predictedClassLabelsfloat;
@@ -297,20 +279,25 @@ int main()
         float dataFloat = mresult[data];
         givenClassLabelsfloat.push_back(dataFloat);
         for (int j = 2; j < dataTable[0].size() - 1; j++) {
-            dataArrayFloat[(i - 1)*32 + j-1] = std::stof(dataTable[i][j]);
+            dataArrayFloat[(i - 1) * 32 + j - 1] = std::stof(dataTable[i][j]);
         }
     }
-
-    float* dev_input = 0;
 
     for (int i = 0; i < simulate_blocks; i++)
     {
         for (int j = 0; j < 569 * 32; j++)
         {
-            dataArrayFloat[i*569*32 + j] = dataArrayFloat[j];
+            dataArrayFloat[i * 569 * 32 + j] = dataArrayFloat[j];
         }
     }
 
+    return dataArrayFloat;
+}
+
+float* LoadRequest_to_device(int simulate_blocks, int no_of_input, int no_of_columns, float* dataArrayFloat)
+{
+    cudaError_t cudaStatus;
+    float* dev_input = 0;
     cudaStatus = cudaMalloc((void**)&dev_input, simulate_blocks * no_of_columns * no_of_input * sizeof(float));
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMalloc failed!");
@@ -322,19 +309,47 @@ int main()
         fprintf(stderr, "cudaMemcpy failed!");
     }
 
+    return dev_input;
+}
+
+int main()
+{
+    /*const int arraySize = 5;
+    const int a[arraySize] = { 1, 2, 3, 4, 5 };
+    const int b[arraySize] = { 10, 20, 30, 40, 50 };
+    int c[arraySize] = { 0 };*/
+    using namespace std;
+
+    cudaError_t cudaStatus;
+    Tree* dev_my_tree;
+    dev_my_tree = InitializeModel();
+
+    
+
+    int simulate_blocks = 10000;
+    const int no_of_input = 569;
+    const int no_of_columns = 32;
+
+    float* dataArrayFloat = LoadRequest_to_host(simulate_blocks,no_of_input, no_of_columns);
+
+    clock_t begin = clock();
+
+    float* dev_input = LoadRequest_to_device(simulate_blocks, no_of_input, no_of_columns, dataArrayFloat);
+    
+
     cudaEvent_t start, stop;
     float elapsedTime;
-    cudaEventCreate(&start);
-    cudaEventRecord(start, 0);
+    /*cudaEventCreate(&start);
+    cudaEventRecord(start, 0);*/
 
     MySingleTreeKernel << <simulate_blocks, 569 >> >(dev_my_tree, dev_input, no_of_columns);
 
-    cudaEventCreate(&stop);
+    /*cudaEventCreate(&stop);
     cudaEventRecord(stop, 0);
     cudaEventSynchronize(stop);
 
     cudaEventElapsedTime(&elapsedTime, start, stop);
-    printf("Elapsed kernel time : %f ms\n", elapsedTime);
+    printf("Elapsed kernel time : %f ms\n", elapsedTime);*/
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
@@ -354,27 +369,6 @@ int main()
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     printf("Elapsed CPU time : %f ms\n", elapsed_secs*1000);
 
-    
-    
-
-    //// Add vectors in parallel.
-    //cudaError_t cudaStatus = addWithCuda(c, a, b, arraySize);
-
-    //if (cudaStatus != cudaSuccess) {
-    //    fprintf(stderr, "addWithCuda failed!");
-    //    return 1;
-    //}
-
-    ////cudaStatus = InferWithCuda(c, a, b, arraySize);
-    //if (cudaStatus != cudaSuccess) {
-    //    fprintf(stderr, "addWithCuda failed!");
-    //    return 1;
-    //}
-
-    //printf("%d %d %d %d %d",c[0], c[1], c[2], c[3], c[4]);
-
-    // cudaDeviceReset must be called before exiting in order for profiling and
-    // tracing tools such as Nsight and Visual Profiler to show complete traces.
     cudaStatus = cudaDeviceReset();
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaDeviceReset failed!");
@@ -384,83 +378,4 @@ int main()
     return 0;
 }
 
-// 
-// Helper function for using CUDA to add vectors in parallel.
-cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
-{
-    int *dev_a = 0;
-    int *dev_b = 0;
-    int *dev_c = 0;
-    cudaError_t cudaStatus;
 
-    // Choose which GPU to run on, change this on a multi-GPU system.
-    cudaStatus = cudaSetDevice(0);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
-        goto Error;
-    }
-
-    // Allocate GPU buffers for three vectors (two input, one output)    .
-    cudaStatus = cudaMalloc((void**)&dev_c, size * sizeof(int));
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMalloc failed!");
-        goto Error;
-    }
-
-    cudaStatus = cudaMalloc((void**)&dev_a, size * sizeof(int));
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMalloc failed!");
-        goto Error;
-    }
-
-    cudaStatus = cudaMalloc((void**)&dev_b, size * sizeof(int));
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMalloc failed!");
-        goto Error;
-    }
-
-    // Copy input vectors from host memory to GPU buffers.
-    cudaStatus = cudaMemcpy(dev_a, a, size * sizeof(int), cudaMemcpyHostToDevice);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMemcpy failed!");
-        goto Error;
-    }
-
-    cudaStatus = cudaMemcpy(dev_b, b, size * sizeof(int), cudaMemcpyHostToDevice);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMemcpy failed!");
-        goto Error;
-    }
-
-    // Launch a kernel on the GPU with one thread for each element.
-    //addKernel<<<1, size>>>(dev_c, dev_a, dev_b);
-
-    // Check for any errors launching the kernel
-    cudaStatus = cudaGetLastError();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "addKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
-        goto Error;
-    }
-    
-    // cudaDeviceSynchronize waits for the kernel to finish, and returns
-    // any errors encountered during the launch.
-    cudaStatus = cudaDeviceSynchronize();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaDeviceSynchronize returned error code %d after launching addKernel!\n", cudaStatus);
-        goto Error;
-    }
-
-    // Copy output vector from GPU buffer to host memory.
-    cudaStatus = cudaMemcpy(c, dev_c, size * sizeof(int), cudaMemcpyDeviceToHost);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMemcpy failed!");
-        goto Error;
-    }
-
-Error:
-    cudaFree(dev_c);
-    cudaFree(dev_a);
-    cudaFree(dev_b);
-    
-    return cudaStatus;
-}

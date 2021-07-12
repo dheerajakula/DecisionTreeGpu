@@ -139,7 +139,7 @@ __device__ float InferOneTree(Tree tree, const float* input)
 }
 
 // kernel to infer one tree
-__global__ void MySingleTreeKernel(Tree* tree, float* input, int columns)
+__global__ void MySingleTreeKernel(Tree* tree, float* input, int columns, float* dev_output)
 {
     int no_of_columns = columns;
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -147,6 +147,7 @@ __global__ void MySingleTreeKernel(Tree* tree, float* input, int columns)
     float* input_slice = input + i * no_of_columns;
     float output = InferOneTree(*tree, input_slice);
     //printf("output %f", output);
+    dev_output[i] = output;
 }
 
 Tree* InitializeModel()
@@ -279,7 +280,7 @@ float* LoadRequest_to_host(int simulate_blocks, int no_of_input, int no_of_colum
         float dataFloat = mresult[data];
         givenClassLabelsfloat.push_back(dataFloat);
         for (int j = 2; j < dataTable[0].size() - 1; j++) {
-            dataArrayFloat[(i - 1) * 32 + j - 1] = std::stof(dataTable[i][j]);
+            dataArrayFloat[(i - 1) * 32 + j - 2] = std::stof(dataTable[i][j]);
         }
     }
 
@@ -312,6 +313,17 @@ float* LoadRequest_to_device(int simulate_blocks, int no_of_input, int no_of_col
     return dev_input;
 }
 
+float* assignMem_to_output(int simulate_blocks, int no_of_input, int no_of_columns)
+{
+    cudaError_t cudaStatus;
+    float* dev_output = 0;
+    cudaStatus = cudaMalloc((void**)&dev_output, simulate_blocks * no_of_input * sizeof(float));
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "cudaMalloc failed!");
+    }
+    return dev_output;
+}
+
 int main()
 {
     /*const int arraySize = 5;
@@ -336,13 +348,16 @@ int main()
 
     float* dev_input = LoadRequest_to_device(simulate_blocks, no_of_input, no_of_columns, dataArrayFloat);
     
+    float* dev_output = assignMem_to_output(simulate_blocks, no_of_input, no_of_columns);
+
+    float* host_output = new float[simulate_blocks*no_of_input];
 
     cudaEvent_t start, stop;
     float elapsedTime;
     /*cudaEventCreate(&start);
     cudaEventRecord(start, 0);*/
 
-    MySingleTreeKernel << <simulate_blocks, 569 >> >(dev_my_tree, dev_input, no_of_columns);
+    MySingleTreeKernel << <simulate_blocks, 569 >> >(dev_my_tree, dev_input, no_of_columns, dev_output);
 
     /*cudaEventCreate(&stop);
     cudaEventRecord(stop, 0);
@@ -363,6 +378,11 @@ int main()
     cudaStatus = cudaDeviceSynchronize();
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaDeviceSynchronize returned error code %d after launching Kernel!\n", cudaStatus);
+    }
+
+    cudaStatus = cudaMemcpy(host_output, dev_output, simulate_blocks * no_of_input * sizeof(float), cudaMemcpyDeviceToHost);
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "cudaMemcpy failed!");
     }
 
     clock_t end = clock();

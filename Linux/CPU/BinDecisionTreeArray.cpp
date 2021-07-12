@@ -7,18 +7,18 @@ using namespace std;
 
 struct Treenode {
     int index; //index to compare, -1 if leaf
-    double data; //value to compare if not leaf, return value if leaf
+    float data; //value to compare if not leaf, return value if leaf
     bool isLeaf; //leaf or not
     int left; //left child index in tree array
     int right; //right child index in tree array
     string comSymbol; //symbol to compare, "?" for leaf
 };
 
-double testDataOnBinDecisionTree(double * dataTableElement, Treenode* treenodes)
+float testDataOnBinDecisionTree(float * dataTableElement, Treenode* treenodes)
 {
     int i = 0;
     while(treenodes[i].isLeaf == 0){
-        double inputValue = dataTableElement[treenodes[i].index];
+        float inputValue = dataTableElement[treenodes[i].index];
         if(inputValue <= treenodes[i].data){
             i = treenodes[i].left;
         }else{
@@ -80,8 +80,8 @@ int main(int argc, const char *argv[])
 
     clock_t start,end;
     msd mresult;
-    mresult["B"] = 1.0;
-    mresult["M"] = 2.0;
+    mresult["B"] = 2.0;
+    mresult["M"] = 1.0;
 	ifstream inputFile;// Input file stream
 	string singleInstance;// Single line read from the input file 
 	vvs dataTable;// Input data in the form of a vector of vector of strings
@@ -99,12 +99,13 @@ int main(int argc, const char *argv[])
     }
     int row = dataTable.size()-1;
     int column = dataTable[0].size()-1;
-    //double dataArrayDouble[row][column];
 
-    double **dataArrayDouble = new double*[row];
-    for(int i = 0; i < row; ++i) {
-        dataArrayDouble[i] = new double[column];
-    }
+    const int no_of_input = 569;
+    const int no_of_columns = 32;
+
+    int simulate_blocks = 10000;
+
+    float* dataArrayDouble = new float[simulate_blocks * no_of_input * no_of_columns];
     // Stores the predicted class labels for each row in Int
     vd predictedClassLabelsDouble;
     // Stores the given class labels in the test data in Int
@@ -114,21 +115,33 @@ int main(int argc, const char *argv[])
     for (int i = 1; i < dataTable.size(); i++)
     {
         string data = dataTable[i][1];
-        double dataDouble = mresult[data];
+        float dataDouble = mresult[data];
         givenClassLabelsDouble.push_back(dataDouble);
         for (int j = 0; j < dataTable[0].size()-1-2; j++){
-            dataArrayDouble[i-1][j] = std::stod(dataTable[i][j+2]);
+            dataArrayDouble[(i-1)*32 + j] = std::stod(dataTable[i][j+2]);
         }
     }
+    for (int i = 0; i < simulate_blocks; i++)
+    {
+        for (int j = 0; j < 569 * 32; j++)
+        {
+            dataArrayDouble[i * 569 * 32 + j] = dataArrayDouble[j];
+        }
+    }
+
     start=clock();
     // Predict class labels based on the decision tree
-    for (int i = 0; i < row; i++)
+    for(int simulate_ = 0 ; simulate_ < simulate_blocks; simulate_++)
     {
-        double someDouble = testDataOnBinDecisionTree(dataArrayDouble[i],treenodes);
-        predictedClassLabelsDouble.push_back(someDouble);
+        for (int i = 0; i < row; i++)
+        {
+            float someDouble = testDataOnBinDecisionTree(dataArrayDouble + simulate_*569*32 + i*32,treenodes);
+            predictedClassLabelsDouble.push_back(someDouble);
+        }
     }
+    
     end=clock();
-    cout << "Time Using: " <<(double)(end-start)/CLOCKS_PER_SEC << endl;
+    cout << "Time Using: " <<(float)(end-start)/CLOCKS_PER_SEC << endl;
 	dataTable.clear();
     // Print output
 	ofstream outputFile;

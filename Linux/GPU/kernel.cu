@@ -214,16 +214,17 @@ Tree* InitializeModel()
     Tree my_tree = Tree(treenodes, treeSize);
 
     my_tree.AssignNodesToGpu();
-
+    
     Tree* dev_my_tree;
-
+    
     // Assign memory to device tree
     cudaStatus = cudaMalloc((void**)&dev_my_tree, sizeof(Tree));
+    
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMalloc failed!");
         fprintf(stderr, "failed intializing model!");
     }
-
+    
     // Copy tree from host memory to GPU.
     cudaStatus = cudaMemcpy(dev_my_tree, &my_tree, sizeof(Tree), cudaMemcpyHostToDevice);
     if (cudaStatus != cudaSuccess) {
@@ -295,33 +296,67 @@ float* LoadRequest_to_host(int simulate_blocks, int no_of_input, int no_of_colum
     return dataArrayFloat;
 }
 
-float* LoadRequest_to_device(int simulate_blocks, int no_of_input, int no_of_columns, float* dataArrayFloat)
+float* assignMem_to_Input(int simulate_blocks, int no_of_input, int no_of_columns)
 {
     cudaError_t cudaStatus;
     float* dev_input = 0;
+
+    clock_t begin = clock();
     cudaStatus = cudaMalloc((void**)&dev_input, simulate_blocks * no_of_columns * no_of_input * sizeof(float));
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMalloc failed!");
     }
+    clock_t end = clock();
 
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    printf("Elapsed time for cuda malloc for input: %f ms\n", elapsed_secs*1000);
+
+    return dev_input;
+}
+
+void copyInput_h_to_d(int simulate_blocks, int no_of_input, int no_of_columns, float* dataArrayFloat, float* dev_input)
+{
+    cudaError_t cudaStatus;
+    clock_t begin = clock();
     // Copy input vectors from host memory to GPU buffers.
     cudaStatus = cudaMemcpy(dev_input, dataArrayFloat, simulate_blocks * no_of_columns * no_of_input * sizeof(float), cudaMemcpyHostToDevice);
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMemcpy failed!");
     }
-
-    return dev_input;
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    printf("Elapsed time for cuda memcopy for input: %f ms\n", elapsed_secs*1000);
 }
 
 float* assignMem_to_output(int simulate_blocks, int no_of_input, int no_of_columns)
 {
     cudaError_t cudaStatus;
     float* dev_output = 0;
+
+    clock_t begin = clock();
+
     cudaStatus = cudaMalloc((void**)&dev_output, simulate_blocks * no_of_input * sizeof(float));
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMalloc failed!");
     }
+
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    printf("Elapsed time for cuda malloc for output : %f ms\n", elapsed_secs*1000);
     return dev_output;
+}
+
+void copyOutput_d_to_h(int simulate_blocks, int no_of_input, int no_of_columns, float* host_output, float* dev_output)
+{
+    cudaError_t cudaStatus;
+    clock_t begin = clock();
+    cudaStatus = cudaMemcpy(host_output, dev_output, simulate_blocks * no_of_input * sizeof(float), cudaMemcpyDeviceToHost);
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "cudaMemcpy failed!");
+    }
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    printf("Elapsed time for cuda memcpy for output : %f ms\n", elapsed_secs*1000);
 }
 
 int main()
@@ -334,37 +369,40 @@ int main()
 
     cudaError_t cudaStatus;
     Tree* dev_my_tree;
+    
     dev_my_tree = InitializeModel();
-
+    
     
 
-    int simulate_blocks = 10000;
+    int simulate_blocks = 100000;
     const int no_of_input = 569;
     const int no_of_columns = 32;
-
-    float* dataArrayFloat = LoadRequest_to_host(simulate_blocks,no_of_input, no_of_columns);
-
-    clock_t begin = clock();
-
-    float* dev_input = LoadRequest_to_device(simulate_blocks, no_of_input, no_of_columns, dataArrayFloat);
     
-    float* dev_output = assignMem_to_output(simulate_blocks, no_of_input, no_of_columns);
-
+    float* dataArrayFloat = LoadRequest_to_host(simulate_blocks,no_of_input, no_of_columns);
     float* host_output = new float[simulate_blocks*no_of_input];
+
+    clock_t begin_total_time = clock();
+
+    
+    float* dev_input = assignMem_to_Input(simulate_blocks, no_of_input, no_of_columns);
+
+    copyInput_h_to_d(simulate_blocks, no_of_input, no_of_columns, dataArrayFloat, dev_input);
+
+    float* dev_output = assignMem_to_output(simulate_blocks, no_of_input, no_of_columns);
 
     cudaEvent_t start, stop;
     float elapsedTime;
-    /*cudaEventCreate(&start);
-    cudaEventRecord(start, 0);*/
+    cudaEventCreate(&start);
+    cudaEventRecord(start, 0);
 
     MySingleTreeKernel << <simulate_blocks, 569 >> >(dev_my_tree, dev_input, no_of_columns, dev_output);
 
-    /*cudaEventCreate(&stop);
+    cudaEventCreate(&stop);
     cudaEventRecord(stop, 0);
     cudaEventSynchronize(stop);
 
     cudaEventElapsedTime(&elapsedTime, start, stop);
-    printf("Elapsed kernel time : %f ms\n", elapsedTime);*/
+    printf("Elapsed kernel time : %f ms\n", elapsedTime);
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
@@ -380,21 +418,20 @@ int main()
         fprintf(stderr, "cudaDeviceSynchronize returned error code %d after launching Kernel!\n", cudaStatus);
     }
 
-    cudaStatus = cudaMemcpy(host_output, dev_output, simulate_blocks * no_of_input * sizeof(float), cudaMemcpyDeviceToHost);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMemcpy failed!");
-    }
+    copyOutput_d_to_h(simulate_blocks, no_of_input, no_of_columns, host_output, dev_output);
 
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    printf("Elapsed CPU time : %f ms\n", elapsed_secs*1000);
+    clock_t end_total_time = clock();
+
+    double elapsed_secs = double(end_total_time - begin_total_time) / CLOCKS_PER_SEC;
+
+    printf("Total Elapsed time : %f ms\n", elapsed_secs*1000);
 
     cudaStatus = cudaDeviceReset();
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaDeviceReset failed!");
         return 1;
     }
-
+    
     return 0;
 }
 

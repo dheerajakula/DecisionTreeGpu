@@ -1,5 +1,8 @@
 dtree
 decisionTreeOutput.txt
+*.model
+.ipynb_checkpoints/
+*.lock
 *.out
 *.i
 *.ii

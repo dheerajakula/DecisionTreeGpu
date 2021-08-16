@@ -156,52 +156,99 @@ Tree* InitializeModel()
     Node treenodes[treeSize];
 
     // create a binary decision tree.
-    treenodes[0] = Node(7, 0.052, false, 1);
+    // treenodes[0] = Node(7, 0.052, false, 1);
 
-    treenodes[1] = Node(20, 16.54, false, 3);
-    treenodes[2] = Node(26, 0.225, false, 5);
+    // treenodes[1] = Node(20, 16.54, false, 3);
+    // treenodes[2] = Node(26, 0.225, false, 5);
 
-    treenodes[3] = Node(13, 37.61, false, 7);
-    treenodes[4] = Node(21, 20.22, false, 9);
+    // treenodes[3] = Node(13, 37.61, false, 7);
+    // treenodes[4] = Node(21, 20.22, false, 9);
 
-    treenodes[5] = Node(-1, 2.0, true, -1);
-    treenodes[6] = Node(23, 710.2, false, 11);
+    // treenodes[5] = Node(-1, 2.0, true, -1);
+    // treenodes[6] = Node(23, 710.2, false, 11);
 
-    treenodes[7] = Node(21, 33.27, false, 13);
-    treenodes[8] = Node(4, 0.091, false, 15);
+    // treenodes[7] = Node(21, 33.27, false, 13);
+    // treenodes[8] = Node(4, 0.091, false, 15);
 
-    treenodes[9] = Node(-1, 2.0, true, -1);
-    treenodes[10] = Node(17, 0.011, false, 17);
+    // treenodes[9] = Node(-1, 2.0, true, -1);
+    // treenodes[10] = Node(17, 0.011, false, 17);
 
-    treenodes[11] = Node(21, 25.95, false, 19);
-    treenodes[12] = Node(1, 14.12, false, 21);
+    // treenodes[11] = Node(21, 25.95, false, 19);
+    // treenodes[12] = Node(1, 14.12, false, 21);
 
-    treenodes[13] = Node(-1, 2.0, true, -1);
-    treenodes[14] = Node(21, 34.14, false, 23);
+    // treenodes[13] = Node(-1, 2.0, true, -1);
+    // treenodes[14] = Node(21, 34.14, false, 23);
 
-    treenodes[15] = Node(-1, 2.0, true, -1);
-    treenodes[16] = Node(17, 0.012, false, 25);
+    // treenodes[15] = Node(-1, 2.0, true, -1);
+    // treenodes[16] = Node(17, 0.012, false, 25);
 
-    treenodes[17] = Node(-1, 1.0, true, -1);
-    treenodes[18] = Node(-1, 2.0, true, -1);
+    // treenodes[17] = Node(-1, 1.0, true, -1);
+    // treenodes[18] = Node(-1, 2.0, true, -1);
 
-    treenodes[19] = Node(-1, 2.0, true, -1);
-    treenodes[20] = Node(9, 0.065, false, 27);
+    // treenodes[19] = Node(-1, 2.0, true, -1);
+    // treenodes[20] = Node(9, 0.065, false, 27);
 
-    treenodes[21] = Node(25, 0.361, false, 29);
-    treenodes[22] = Node(-1, 1.0, true, -1);
+    // treenodes[21] = Node(25, 0.361, false, 29);
+    // treenodes[22] = Node(-1, 1.0, true, -1);
 
-    treenodes[23] = Node(-1, 1.0, true, -1);
-    treenodes[24] = Node(-1, 2.0, true, -1);
+    // treenodes[23] = Node(-1, 1.0, true, -1);
+    // treenodes[24] = Node(-1, 2.0, true, -1);
 
-    treenodes[25] = Node(-1, 2.0, true, -1);
-    treenodes[26] = Node(-1, 1.0, true, -1);
+    // treenodes[25] = Node(-1, 2.0, true, -1);
+    // treenodes[26] = Node(-1, 1.0, true, -1);
 
-    treenodes[27] = Node(-1, 2.0, true, -1);
-    treenodes[28] = Node(-1, 1.0, true, -1);
+    // treenodes[27] = Node(-1, 2.0, true, -1);
+    // treenodes[28] = Node(-1, 1.0, true, -1);
 
-    treenodes[29] = Node(-1, 1.0, true, -1);
-    treenodes[30] = Node(-1, 2.0, true, -1);
+    // treenodes[29] = Node(-1, 1.0, true, -1);
+    // treenodes[30] = Node(-1, 2.0, true, -1);
+
+    treenodes[0] = Node(22,105.95,false,1);
+
+    treenodes[1] = Node(27,0.159,false,3);
+    treenodes[2] = Node(7,0.049,false,5);
+
+    treenodes[3] = Node(13,91.55,false,7);
+    treenodes[4] = Node(21,23.47,false,9);
+
+    treenodes[5] = Node(17,0.01,false,11);
+    treenodes[6] = Node(26,0.216,false,13);
+
+    treenodes[7] = Node(10,0.643,false,15);
+    treenodes[8] = Node(-1,1.0,true,-1);
+
+    treenodes[9] = Node(-1,2.0,true,-1);
+    treenodes[10] = Node(-1,1.0,true,-1);
+
+    treenodes[11] = Node(24,0.123,false,17);
+    treenodes[12] = Node(-1,2.0,true,-1);
+
+    treenodes[13] = Node(-1,2.0,true,-1);
+    treenodes[14] = Node(1,15.375,false,19);
+    
+    treenodes[15] = Node(9,0.054,false,21);
+    treenodes[16] = Node(13,49.48,false,23);
+
+    treenodes[17] = Node(8,0.179,false,25);
+    treenodes[18] = Node(-1,1.0,true,-1);
+
+    treenodes[19] = Node(20,17.205,false,27);
+    treenodes[20] = Node(-1,1.0,true,-1);
+
+    treenodes[21] = Node(29,0.065,false,29);
+    treenodes[22] = Node(-1,2.0,true,-1);
+
+    treenodes[23] = Node(-1,1.0,true,-1);
+    treenodes[24] = Node(-1,2.0,true,-1);
+
+    treenodes[25] = Node(-1,2.0,true,-1);
+    treenodes[26] = Node(-1,1.0,true,-1);
+
+    treenodes[27] = Node(-1,2.0,true,-1);
+    treenodes[28] = Node(-1,1.0,true,-1);
+
+    treenodes[29] = Node(-1,2.0,true,-1);
+    treenodes[30] = Node(-1,1.0,true,-1);
 
     cudaError_t cudaStatus;
 

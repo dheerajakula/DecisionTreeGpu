@@ -30,53 +30,101 @@ float testDataOnBinDecisionTree(float * dataTableElement, Treenode* treenodes)
 
 int main(int argc, const char *argv[])
 {
+    // Treenode treenodes[31];
+    // treenodes[0] = {7,0.052,false,1,2,"<="};
+
+    // treenodes[1] = {20,16.54,false,3,4,"<="};
+    // treenodes[2] = {26,0.225,false,5,6,"<="};
+
+    // treenodes[3] = {13,37.61,false,7,8,"<="};
+    // treenodes[4] = {21,20.22,false,9,10,"<="};
+
+    // treenodes[5] = {-1,2.0,true,-1,-1,"?"};
+    // treenodes[6] = {23,710.2,false,11,12,"<="};
+
+    // treenodes[7] = {21,33.27,false,13,14,"<="};
+    // treenodes[8] = {4,0.091,false,15,16,"<="};
+
+    // treenodes[9] = {-1,2.0,true,-1,-1,"?"};
+    // treenodes[10] = {17,0.011,false,17,18,"<="};
+
+    // treenodes[11] = {21,25.95,false,19,20,"<="};
+    // treenodes[12] = {1,14.12,false,21,22,"<="};
+
+    // treenodes[13] = {-1,2.0,true,-1,-1,"?"};
+    // treenodes[14] = {21,34.14,false,23,24,"<="};
+
+    // treenodes[15] = {-1,2.0,true,-1,-1,"?"};
+    // treenodes[16] = {17,0.012,false,25,26,"<="};
+
+    // treenodes[17] = {-1,1.0,true,-1,-1,"?"};
+    // treenodes[18] = {-1,2.0,true,-1,-1,"?"};
+
+    // treenodes[19] = {-1,2.0,true,-1,-1,"?"};
+    // treenodes[20] = {9,0.065,false,27,28,"<="};
+
+    // treenodes[21] = {25,0.361,false,29,30,"<="};
+    // treenodes[22] = {-1,1.0,true,-1,-1,"?"};
+
+    // treenodes[23] = {-1,1.0,true,-1,-1,"?"};
+    // treenodes[24] = {-1,2.0,true,-1,-1,"?"};
+
+    // treenodes[25] = {-1,2.0,true,-1,-1,"?"};
+    // treenodes[26] = {-1,1.0,true,-1,-1,"?"};
+
+    // treenodes[27] = {-1,2.0,true,-1,-1,"?"};
+    // treenodes[28] = {-1,1.0,true,-1,-1,"?"};
+
+    // treenodes[29] = {-1,1.0,true,-1,-1,"?"};
+    // treenodes[30] = {-1,2.0,true,-1,-1,"?"};
+
     Treenode treenodes[31];
-    treenodes[0] = {7,0.052,false,1,2,"<="};
+    treenodes[0] = {22,105.95,false,1,2};
 
-    treenodes[1] = {20,16.54,false,3,4,"<="};
-    treenodes[2] = {26,0.225,false,5,6,"<="};
+    treenodes[1] = {27,0.159,false,3,4};
+    treenodes[2] = {7,0.049,false,5,6};
 
-    treenodes[3] = {13,37.61,false,7,8,"<="};
-    treenodes[4] = {21,20.22,false,9,10,"<="};
+    treenodes[3] = {13,91.55,false,7,8};
+    treenodes[4] = {21,23.47,false,9,10};
 
-    treenodes[5] = {-1,2.0,true,-1,-1,"?"};
-    treenodes[6] = {23,710.2,false,11,12,"<="};
+    treenodes[5] = {17,0.01,false,11,12};
+    treenodes[6] = {26,0.216,false,13,14};
 
-    treenodes[7] = {21,33.27,false,13,14,"<="};
-    treenodes[8] = {4,0.091,false,15,16,"<="};
+    treenodes[7] = {10,0.643,false,15,16};
+    treenodes[8] = {-1,1.0,true,-1,-1};
 
-    treenodes[9] = {-1,2.0,true,-1,-1,"?"};
-    treenodes[10] = {17,0.011,false,17,18,"<="};
+    treenodes[9] = {-1,2.0,true,-1,-1};
+    treenodes[10] = {-1,1.0,true,-1,-1};
 
-    treenodes[11] = {21,25.95,false,19,20,"<="};
-    treenodes[12] = {1,14.12,false,21,22,"<="};
+    treenodes[11] = {24,0.123,false,17,18};
+    treenodes[12] = {-1,2.0,true,-1,-1};
 
-    treenodes[13] = {-1,2.0,true,-1,-1,"?"};
-    treenodes[14] = {21,34.14,false,23,24,"<="};
+    treenodes[13] = {-1,2.0,true,-1,-1};
+    treenodes[14] = {1,15.375,false,19,20};
+    
+    treenodes[15] = {9,0.054,false,21,22};
+    treenodes[16] = {13,49.48,false,23,24};
 
-    treenodes[15] = {-1,2.0,true,-1,-1,"?"};
-    treenodes[16] = {17,0.012,false,25,26,"<="};
+    treenodes[17] = {8,0.179,false,25,26};
+    treenodes[18] = {-1,1.0,true,-1,-1};
 
-    treenodes[17] = {-1,1.0,true,-1,-1,"?"};
-    treenodes[18] = {-1,2.0,true,-1,-1,"?"};
+    treenodes[19] = {20,17.205,false,27,28};
+    treenodes[20] = {-1,1.0,true,-1,-1};
 
-    treenodes[19] = {-1,2.0,true,-1,-1,"?"};
-    treenodes[20] = {9,0.065,false,27,28,"<="};
+    treenodes[21] = {29,0.065,false,29,30};
+    treenodes[22] = {-1,2.0,true,-1,-1};
 
-    treenodes[21] = {25,0.361,false,29,30,"<="};
-    treenodes[22] = {-1,1.0,true,-1,-1,"?"};
+    treenodes[23] = {-1,1.0,true,-1,-1};
+    treenodes[24] = {-1,2.0,true,-1,-1};
 
-    treenodes[23] = {-1,1.0,true,-1,-1,"?"};
-    treenodes[24] = {-1,2.0,true,-1,-1,"?"};
+    treenodes[25] = {-1,2.0,true,-1,-1};
+    treenodes[26] = {-1,1.0,true,-1,-1};
 
-    treenodes[25] = {-1,2.0,true,-1,-1,"?"};
-    treenodes[26] = {-1,1.0,true,-1,-1,"?"};
+    treenodes[27] = {-1,2.0,true,-1,-1};
+    treenodes[28] = {-1,1.0,true,-1,-1};
 
-    treenodes[27] = {-1,2.0,true,-1,-1,"?"};
-    treenodes[28] = {-1,1.0,true,-1,-1,"?"};
-
-    treenodes[29] = {-1,1.0,true,-1,-1,"?"};
-    treenodes[30] = {-1,2.0,true,-1,-1,"?"};
+    treenodes[29] = {-1,2.0,true,-1,-1};
+    treenodes[30] = {-1,1.0,true,-1,-1};
 
     clock_t start,end;
     msd mresult;
@@ -103,7 +151,7 @@ int main(int argc, const char *argv[])
     const int no_of_input = 569;
     const int no_of_columns = 32;
 
-    int simulate_blocks = 10000;
+    int simulate_blocks = 100000;
 
     float* dataArrayDouble = new float[simulate_blocks * no_of_input * no_of_columns];
     // Stores the predicted class labels for each row in Int
